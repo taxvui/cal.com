@@ -2,7 +2,7 @@ import type { App_RoutingForms_Form } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 import { ShellMain } from "@calcom/features/shell/Shell";
 import useApp from "@calcom/lib/hooks/useApp";
@@ -228,14 +228,20 @@ function SingleForm({ form, appUrl, Page }: SingleFormComponentProps) {
     const action = processRoute({ form, response });
     setDecidedAction(action);
   }
-
-  const hookForm = useForm({
-    defaultValues: form,
-  });
-
+  const hookForm = useFormContext<RoutingFormWithResponseCount>();
+  const [skipFirstUpdate, setSkipFirstUpdate] = useState(true);
   useEffect(() => {
-    hookForm.reset(form);
-  }, [form, hookForm]);
+    if (Object.keys(hookForm.getValues()).length === 0 || hookForm.getValues().id !== form.id) {
+      hookForm.reset(form);
+    }
+
+    if (skipFirstUpdate) {
+      setSkipFirstUpdate(false);
+    } else {
+      hookForm.reset(form);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
 
   const mutation = trpc.viewer.appRoutingForms.formMutation.useMutation({
     onSuccess() {

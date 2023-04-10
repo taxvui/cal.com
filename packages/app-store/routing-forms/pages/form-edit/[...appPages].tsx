@@ -1,5 +1,5 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Controller, useFieldArray } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -86,6 +86,7 @@ function Field({
   appUrl: string;
 }) {
   const [identifier, _setIdentifier] = useState(hookForm.getValues(`${hookFieldNamespace}.identifier`));
+  const [labelState, _setLabelState] = useState(hookForm.getValues(`${hookFieldNamespace}.label`));
   const { t } = useLocale();
 
   const setUserChangedIdentifier = (val: string) => {
@@ -93,14 +94,15 @@ function Field({
     // Also, update the form identifier so tha it can be persisted
     hookForm.setValue(`${hookFieldNamespace}.identifier`, val);
   };
+  const setUserChangedLabel = (val: string) => {
+    _setLabelState(val);
+    hookForm.setValue(`${hookFieldNamespace}.label`, val);
 
-  const label = hookForm.watch(`${hookFieldNamespace}.label`);
-
-  useEffect(() => {
     if (!hookForm.getValues(`${hookFieldNamespace}.identifier`)) {
-      _setIdentifier(label);
+      _setIdentifier(val);
     }
-  }, [label, hookFieldNamespace, hookForm]);
+  };
+
   const router = hookForm.getValues(`${hookFieldNamespace}.router`);
   const routerField = hookForm.getValues(`${hookFieldNamespace}.routerField`);
   return (
@@ -108,7 +110,7 @@ function Field({
       data-testid="field"
       className="group mb-4 flex w-full items-center justify-between ltr:mr-2 rtl:ml-2">
       <FormCard
-        label={label || `Field ${fieldIndex + 1}`}
+        label={labelState || `Field ${fieldIndex + 1}`}
         moveUp={moveUp}
         moveDown={moveDown}
         badge={
@@ -118,6 +120,7 @@ function Field({
         <div className="w-full">
           <div className="mb-6 w-full">
             <TextField
+              data-testid={`${hookFieldNamespace}.label`}
               disabled={!!router}
               label="Label"
               placeholder={t("this_is_what_your_users_would_see")}
@@ -125,9 +128,9 @@ function Field({
                * This is a bit of a hack to make sure that for routerField, label is shown from there.
                * For other fields, value property is used because it exists and would take precedence
                */
-              defaultValue={routerField?.label}
               required
-              {...hookForm.register(`${hookFieldNamespace}.label`)}
+              value={labelState || routerField?.label || ""}
+              onChange={(e) => setUserChangedLabel(e.target.value)}
             />
           </div>
           <div className="mb-6 w-full">
@@ -137,8 +140,7 @@ function Field({
               name="identifier"
               required
               placeholder={t("identifies_name_field")}
-              value={identifier}
-              defaultValue={routerField?.identifier || routerField?.label}
+              value={identifier || labelState || routerField?.identifier || routerField?.label || ""}
               onChange={(e) => setUserChangedIdentifier(e.target.value)}
             />
           </div>
