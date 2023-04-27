@@ -420,7 +420,7 @@ export const FormBuilder = function FormBuilder({
           })
         }>
         <DialogContent data-testid="edit-field-dialog">
-          <DialogHeader title={t("add_a_booking_question")} subtitle={t("form_builder_field_add_subtitle")} />
+          <DialogHeader title={t("add_a_booking_question")} subtitle={t("booking_questions_description")} />
           <div>
             <Form
               form={fieldForm}

@@ -5,7 +5,7 @@ export const AttendeeWasRequestedToRescheduleEmail = (
   props: { metadata: { rescheduleLink: string } } & React.ComponentProps<typeof OrganizerScheduledEmail>
 ) => (
   <OrganizerScheduledEmail
-    title="request_reschedule_title_attendee"
+    title="request_reschedule_booking"
     subtitle={
       <>
         {props.calEvent.organizer.language.translate("request_reschedule_subtitle", {

@@ -656,7 +656,7 @@ export default function WorkflowStepContainer(props: WorkflowStepProps) {
                 {isEmailSubjectNeeded && (
                   <div className="mb-6">
                     <div className="flex items-center">
-                      <Label className="mb-0 flex-none">{t("subject")}</Label>
+                      <Label className="mb-0 flex-none">{t("email_subject")}</Label>
                       <div className="flex-grow text-right">
                         <AddVariablesDropdown
                           addVariable={addVariableEmailSubject}

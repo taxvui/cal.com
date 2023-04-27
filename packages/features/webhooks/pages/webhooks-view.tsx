@@ -14,7 +14,7 @@ const WebhooksView = () => {
   const { t } = useLocale();
   return (
     <>
-      <Meta title="Webhooks" description={t("webhooks_description", { appName: APP_NAME })} />
+      <Meta title="Webhooks" description={t("add_webhook_description", { appName: APP_NAME })} />
       <div>
         <Suspense fallback={<WebhookListSkeleton />}>
           <WebhooksList />
