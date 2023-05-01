@@ -1,6 +1,5 @@
 import type { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { useForm, FormProvider } from "react-hook-form";
 
 import RoutingFormsRoutingConfig from "@calcom/app-store/routing-forms/pages/app-routing.config";
 import TypeformRoutingConfig from "@calcom/app-store/typeform/pages/app-routing.config";
@@ -47,7 +46,7 @@ function getRoute(appName: string, pages: string[]) {
     } as NotFound;
   }
   const mainPage = pages[0];
-  const appPage = routingConfig[mainPage] as AppPageType;
+  const appPage = routingConfig.layoutHandler || (routingConfig[mainPage] as AppPageType);
 
   if (!appPage) {
     return {
@@ -62,7 +61,7 @@ const AppPage: AppPageType["default"] = function AppPage(props) {
   const router = useRouter();
   const pages = router.query.pages as string[];
   const route = getRoute(appName, pages);
-  const methods = useForm();
+
   const componentProps = {
     ...props,
     pages: pages.slice(1),
@@ -71,11 +70,7 @@ const AppPage: AppPageType["default"] = function AppPage(props) {
   if (!route || route.notFound) {
     throw new Error("Route can't be undefined");
   }
-  return (
-    <FormProvider {...methods}>
-      <route.Component {...componentProps} />;
-    </FormProvider>
-  );
+  return <route.Component {...componentProps} />;
 };
 
 AppPage.isBookingPage = ({ router }) => {

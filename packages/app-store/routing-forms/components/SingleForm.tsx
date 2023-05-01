@@ -235,13 +235,15 @@ function SingleForm({ form, appUrl, Page }: SingleFormComponentProps) {
   const [isTestPreviewOpen, setIsTestPreviewOpen] = useState(false);
   const [response, setResponse] = useState<Response>({});
   const [decidedAction, setDecidedAction] = useState<Route["action"] | null>(null);
+  const [skipFirstUpdate, setSkipFirstUpdate] = useState(true);
 
   function testRouting() {
     const action = processRoute({ form, response });
     setDecidedAction(action);
   }
+
   const hookForm = useFormContext<RoutingFormWithResponseCount>();
-  const [skipFirstUpdate, setSkipFirstUpdate] = useState(true);
+
   useEffect(() => {
     if (Object.keys(hookForm.getValues()).length === 0 || hookForm.getValues().id !== form.id) {
       hookForm.reset(form);

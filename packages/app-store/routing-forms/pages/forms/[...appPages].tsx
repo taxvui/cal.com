@@ -1,7 +1,5 @@
 // TODO: i18n
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect } from "react";
-import { useFormContext } from "react-hook-form";
 
 import SkeletonLoaderTeamList from "@calcom/features/ee/teams/components/SkeletonloaderTeamList";
 import Shell, { ShellMain } from "@calcom/features/shell/Shell";
@@ -95,13 +93,6 @@ export default function RoutingForms({
       </FormAction>
     );
   }
-
-  const hookForm = useFormContext();
-  useEffect(() => {
-    hookForm.reset({});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <ShellMain
       heading="Routing Forms"
