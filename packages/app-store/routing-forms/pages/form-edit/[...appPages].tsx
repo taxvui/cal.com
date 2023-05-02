@@ -105,6 +105,8 @@ function Field({
 
   const router = hookForm.getValues(`${hookFieldNamespace}.router`);
   const routerField = hookForm.getValues(`${hookFieldNamespace}.routerField`);
+  const { name: labelName, ref: labelRef } = hookForm.register(`${hookFieldNamespace}.label`);
+
   return (
     <div
       data-testid="field"
@@ -131,6 +133,8 @@ function Field({
               required
               value={labelState || routerField?.label || ""}
               onChange={(e) => setUserChangedLabel(e.target.value)}
+              name={labelName}
+              ref={labelRef}
             />
           </div>
           <div className="mb-6 w-full">
