@@ -1,5 +1,4 @@
 import type { Prisma } from "@prisma/client";
-import { BookingStatus, WorkflowActions, WorkflowMethods, WorkflowTriggerEvents } from "@prisma/client";
 
 import { isSMSAction } from "@calcom/features/ee/workflows/lib/actionHelperFunctions";
 import {
@@ -10,8 +9,9 @@ import {
   deleteScheduledSMSReminder,
   scheduleSMSReminder,
 } from "@calcom/features/ee/workflows/lib/reminders/smsReminderManager";
-import { SENDER_ID, SENDER_NAME } from "@calcom/lib/constants";
+import { IS_SELF_HOSTED, SENDER_ID, SENDER_NAME } from "@calcom/lib/constants";
 import type { PrismaClient } from "@calcom/prisma/client";
+import { BookingStatus, WorkflowActions, WorkflowMethods, WorkflowTriggerEvents } from "@calcom/prisma/enums";
 import type { TrpcSessionUser } from "@calcom/trpc/server/trpc";
 
 import { TRPCError } from "@trpc/server";
@@ -333,7 +333,8 @@ export const updateHandler = async ({ ctx, input }: UpdateOptions) => {
         !userWorkflow.teamId &&
         !userWorkflow.user?.teams.length &&
         !isSMSAction(oldStep.action) &&
-        isSMSAction(newStep.action)
+        isSMSAction(newStep.action) &&
+        !IS_SELF_HOSTED
       ) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -487,7 +488,7 @@ export const updateHandler = async ({ ctx, input }: UpdateOptions) => {
   //added steps
   const addedSteps = steps.map((s) => {
     if (s.id <= 0) {
-      if (!userWorkflow.user?.teams.length && isSMSAction(s.action)) {
+      if (!userWorkflow.user?.teams.length && isSMSAction(s.action) && !IS_SELF_HOSTED) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       const { id: _stepId, ...stepToAdd } = s;
