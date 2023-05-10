@@ -49,7 +49,8 @@ import type { Prisma } from "@calcom/prisma/client";
 import { BookingStatus } from "@calcom/prisma/enums";
 import { bookingMetadataSchema } from "@calcom/prisma/zod-utils";
 import { customInputSchema, EventTypeMetaDataSchema } from "@calcom/prisma/zod-utils";
-import { Button, EmailInput, HeadSeo, Badge, useCalcomTheme } from "@calcom/ui";
+import { trpc } from "@calcom/trpc/react";
+import { Button, EmailInput, HeadSeo, Badge, useCalcomTheme, SkeletonText } from "@calcom/ui";
 import { X, ExternalLink, ChevronLeft, Check, Calendar } from "@calcom/ui/components/icon";
 
 import { timeZone } from "@lib/clock";
@@ -132,7 +133,11 @@ export default function Success(props: SuccessProps) {
   const { data: session } = useSession();
 
   const [date, setDate] = useState(dayjs.utc(props.bookingInfo.startTime));
+
   const { eventType, bookingInfo } = props;
+
+  const { data: connectedCalendar, isLoading } = trpc.viewer.connectedCalendars.useQuery();
+  const organizerEmail = connectedCalendar?.destinationCalendar.primaryEmail;
 
   const isBackgroundTransparent = useIsBackgroundTransparent();
   const isEmbed = useIsEmbed();
@@ -438,7 +443,11 @@ export default function Success(props: SuccessProps) {
                                 <span className="mr-2">{bookingInfo.user.name}</span>
                                 <Badge variant="blue">{t("Host")}</Badge>
                               </div>
-                              <p className="text-default">{bookingInfo.user.email}</p>
+                              {isLoading ? (
+                                <SkeletonText className="my-2 h-4 w-56" />
+                              ) : (
+                                <p className="text-default">{organizerEmail || bookingInfo.user?.email}</p>
+                              )}
                             </div>
                           )}
                           {bookingInfo?.attendees.map((attendee) => (

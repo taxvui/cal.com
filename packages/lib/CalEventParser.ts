@@ -45,7 +45,7 @@ ${attendee.email}
 
   const organizer = `
 ${calEvent.organizer.name} - ${calEvent.organizer.language.translate("organizer")}
-${calEvent.organizer.email}
+${calEvent.destinationCalendar?.externalId || calEvent.organizer.email}
   `;
 
   const teamMembers = calEvent.team?.members
