@@ -245,6 +245,18 @@ function SingleForm({ form, appUrl, Page }: SingleFormComponentProps) {
   const hookForm = useFormContext<RoutingFormWithResponseCount>();
 
   useEffect(() => {
+    //  The first time a tab is opened, the hookForm copies the form data (saved version, from the backend),
+    // and then it is considered the source of truth.
+
+    // There are two events we need to overwrite the hookForm data with the form data coming from the server.
+
+    // 1 - When we change the edited form.
+
+    // 2 - When the form is saved elsewhere (such as in another browser tab)
+
+    // In the second case. We skipped the first execution of useEffect to differentiate a tab change from a form change,
+    // because each time a tab changes, a new component is created and another useEffect is executed.
+    // An update from the form always occurs after the first useEffect execution.
     if (Object.keys(hookForm.getValues()).length === 0 || hookForm.getValues().id !== form.id) {
       hookForm.reset(form);
     }
