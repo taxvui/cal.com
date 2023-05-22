@@ -141,7 +141,7 @@ function Field({
             <TextField
               disabled={!!router}
               label="Identifier"
-              name="identifier"
+              name={`${hookFieldNamespace}.identifier`}
               required
               placeholder={t("identifies_name_field")}
               value={identifier || labelState || routerField?.identifier || routerField?.label || ""}
